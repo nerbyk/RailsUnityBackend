@@ -1,0 +1,43 @@
+# syntax = docker/dockerfile:1
+
+ARG RUBY_VERSION=3.2.3
+FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
+
+WORKDIR /rails
+
+
+ENV RAILS_ENV="development" \
+    BUNDLE_DEPLOYMENT="0" \
+    BUNDLE_PATH="/usr/local/bundle" \
+    BUNDLE_WITHOUT=""
+
+
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config
+
+
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
+
+COPY . .
+
+FROM base
+
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y curl libvips postgresql-client && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+COPY --from=base /usr/local/bundle /usr/local/bundle
+COPY --from=base /rails /rails
+
+RUN useradd rails --create-home --shell /bin/bash && \
+    chown -R rails:rails db log storage tmp
+USER rails:rails
+
+
+ENTRYPOINT ["/rails/bin/docker-entrypoint"]
+
+
+EXPOSE 3000
+CMD ["./bin/rails", "server", "-b", "0.0.0.0", "-p", "3000", "--binding", "0.0.0.0"]
