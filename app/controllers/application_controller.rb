@@ -7,6 +7,7 @@
     rescue_from ActiveRecord::RecordInvalid,  with: :unprocessable_entity
 
     before_action :configure_permitted_parameters, if: :devise_controller?
+    before_action :authenticate_user!, unless: :devise_controller?
 
     private
 
@@ -21,6 +22,6 @@
     protected
 
     def configure_permitted_parameters
-      devise_parameter_sanitizer.permit(:sign_up, keys: %i(username first_name last_name))
+      devise_parameter_sanitizer.permit(:sign_up, keys: %i(email))
     end
   end
