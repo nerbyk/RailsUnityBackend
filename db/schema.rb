@@ -10,9 +10,59 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_09_074559) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_11_075153) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "entities", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "farm_id", null: false
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["farm_id"], name: "index_entities_on_farm_id"
+    t.index ["user_id"], name: "index_entities_on_user_id"
+  end
+
+  create_table "entity_locations", force: :cascade do |t|
+    t.bigint "entity_id", null: false
+    t.bigint "farm_id", null: false
+    t.integer "x"
+    t.integer "y"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["entity_id"], name: "index_entity_locations_on_entity_id"
+    t.index ["farm_id", "x", "y"], name: "index_entity_locations_on_farm_id_and_x_and_y", unique: true
+  end
+
+  create_table "entity_receipts", force: :cascade do |t|
+    t.bigint "entity_id", null: false
+    t.string "name", null: false
+    t.string "state", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["entity_id"], name: "index_entity_receipts_on_entity_id"
+  end
+
+  create_table "farms", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_farms_on_user_id"
+  end
+
+  create_table "items", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "farm_id", null: false
+    t.string "name"
+    t.integer "amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["farm_id"], name: "index_items_on_farm_id"
+    t.index ["name"], name: "index_items_on_name", unique: true
+    t.index ["user_id"], name: "index_items_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "provider", default: "email", null: false
@@ -26,9 +76,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_09_074559) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
-    t.string "name"
-    t.string "nickname"
-    t.string "image"
     t.string "email"
     t.json "tokens"
     t.datetime "created_at", null: false
@@ -39,4 +86,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_09_074559) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "entities", "farms"
+  add_foreign_key "entities", "users"
+  add_foreign_key "entity_locations", "entities", on_delete: :cascade
+  add_foreign_key "entity_receipts", "entities"
+  add_foreign_key "farms", "users"
+  add_foreign_key "items", "farms"
+  add_foreign_key "items", "users"
 end
