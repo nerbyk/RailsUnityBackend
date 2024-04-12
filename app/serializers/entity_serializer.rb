@@ -2,10 +2,10 @@ class EntitySerializer < ActiveModel::Serializer
   attributes :guid, :name, :location, :receipts
 
   def location
-    self.object.location.coordinates.each_with_object({ x: [], y: [] }) do |(x, y), loc|
-      loc[:x] << x.to_i
-      loc[:y] << y.to_i
-    end
+    {
+      x: (self.object.location.x1.to_i..self.object.location.x2.to_i).to_a,
+      y: (self.object.location.y1.to_i..self.object.location.y2.to_i).to_a
+    }
   end
 
   def receipts

@@ -6,20 +6,21 @@ class Entity < ApplicationRecord
   validate :location_overlap
 
   scope :overlaps, ->(farm_id, id, location) do
-    where(farm_id: farm_id).where.not(id: id).where("location && ?", location.to_s)
+    box_type = "'#{location.values.join(',')}'::box"
+
+    where(farm_id: farm_id).where.not(id: id).where("location && #{box_type}")
   end
 
-  GEO_FACTORY = RGeo::Geographic.simple_mercator_factory
   GARBAGE_ENTITIES_NAMES = %w[tree stone rock]
   
   def self.default_entities_file = File.read(Rails.root.join('app', 'assets', 'default_entity_map.json'))
   def self.initial_entities      = JSON.parse(default_entities_file, symbolize_names: true)
-  def self.geo_factory           = GEO_FACTORY
 
   def self.generate_location(x_coords, y_coords)
-    points = x_coords.zip(y_coords).map { |x, y| geo_factory.point(x, y) }
+    top = [x_coords.first, y_coords.first]
+    bottom = [x_coords.last, y_coords.last]
 
-    geo_factory.multi_point(points)
+    [top, bottom]
   end
 
   def location=(value)
