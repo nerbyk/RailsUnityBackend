@@ -24,7 +24,7 @@ RSpec.describe "FarmsController", type: :request do
         
         expect(response_body[:entities]).to be_an(Array)
         expect(response_body[:entities][0]).to be_a(Hash)
-        expect(response_body[:entities][0]).to include(:id, :name, :location, :receipts)
+        expect(response_body[:entities][0]).to include(:guid, :name, :location, :receipts)
 
         expect(response_body[:entities][0][:location]).to be_a(Hash)
         expect(response_body[:entities][0][:location]).to include(:x, :y)
@@ -34,9 +34,11 @@ RSpec.describe "FarmsController", type: :request do
         expect(response_body[:entities][0][:location][:y]).to be_an(Array)
         expect(response_body[:entities][0][:location][:y][0]).to be_an(Integer)
 
-        expect(response_body[:entities][0][:receipts]).to be_an(Array)
-        expect(response_body[:entities][0][:receipts][0]).to be_a(Hash)
-        expect(response_body[:entities][0][:receipts][0]).to include(:id, :name, :state, :updated_at, :created_at)
+        response_body[:entities].find { |entity| entity[:guid] == receipt.entity.guid }.tap do |entity|
+          expect(entity[:receipts]).to be_an(Array)
+          expect(entity[:receipts][0]).to be_a(Hash)
+          expect(entity[:receipts][0]).to include(:id, :name, :state, :updated_at, :created_at)
+        end
 
         expect(response_body[:items][0]).to include(:name, :amount)
       end

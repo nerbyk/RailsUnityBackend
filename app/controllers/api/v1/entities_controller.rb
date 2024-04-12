@@ -19,7 +19,7 @@ module Api::V1
     private
 
     def set_entity
-      @entity = current_user.farm.entities.find(params[:id])
+      @entity = current_user.farm.entities.find_by(guid: params[:id])
     end
 
     def move_entity_params

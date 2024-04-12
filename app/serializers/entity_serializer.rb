@@ -1,5 +1,5 @@
 class EntitySerializer < ActiveModel::Serializer
-  attributes :id, :name, :location, :receipts
+  attributes :guid, :name, :location, :receipts
 
   def location
     l = { x: [], y: [] }
