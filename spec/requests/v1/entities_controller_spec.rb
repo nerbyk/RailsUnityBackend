@@ -12,7 +12,7 @@ RSpec.describe "Entities", type: :request do
     let(:new_position) { { x: [1, 2, 3], y: [4, 5, 6] } }
 
     def do_request
-      patch "/api/v1/entities/#{entity.id}/move", params: { position: new_position }
+      patch "/api/v1/entities/#{entity.guid}/move", params: { position: new_position }
     end
 
     before do

@@ -3,29 +3,34 @@ class Farm < ApplicationRecord
   has_many :entities, dependent: :delete_all
   has_many :items, dependent: :destroy
 
-  after_create :create_default_entities_tile_map
-  after_create :create_default_items
+  after_create :create_initial_game_state
 
-  def create_default_entities_tile_map
-    default_entities_attrs = default_entities.map do |it| 
-      { name: it[:type], farm_id: id, user_id: user_id, location: Entity.generate_location(it[:x], it[:y]) } 
-    end
-
-    Entity.insert_all(default_entities_attrs)
-  end
-  
-  def create_default_items
-    default_items_attrs = default_items.map { |it| { name: it[:name], amount: it[:amount], farm_id: id, user_id: user_id } }
-    items.insert_all(default_items_attrs)
+  def create_initial_game_state
+    entities.insert_all(default_entities)
+    items.insert_all(default_items)
   end
 
   private 
   
   def default_entities
-    @_default_entities ||= Entity.initial_entities
+    Entity.initial_entities.map do |it| 
+      { 
+        farm_id: id, 
+        user_id: user_id, 
+        name: it[:type],
+        location: Entity.generate_location(it[:x], it[:y]) 
+      } 
+    end
   end
 
   def default_items
-    @_default_items ||= Item.initial_items
+    Item.initial_items.map do |it| 
+      { 
+        farm_id: id, 
+        user_id: user_id,
+        name: it[:name], 
+        amount: it[:amount] 
+      } 
+    end
   end
 end
