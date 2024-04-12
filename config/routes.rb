@@ -4,6 +4,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       get "/farm", to: "farms#show"
       patch "/entities/:id/move", to: "entities#move"
+      delete "/entities/:id", to: "entities#destroy"
     end
   end
 end

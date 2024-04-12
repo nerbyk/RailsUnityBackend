@@ -13,7 +13,13 @@ module Api::V1
     end
 
     def destroy
-      @entity.destroy!
+      DestroyEntityInteractor.call(entity: @entity).tap do |interactor|
+        if interactor.success?
+          head :ok
+        else
+          render json: { error: interactor.message }, status: :unprocessable_entity
+        end
+      end
     end
 
     private
