@@ -1,13 +1,15 @@
 class EntitySerializer < ActiveModel::Serializer
-  attributes :id, :name, :position, :receipts
+  attributes :id, :name, :location, :receipts
 
-  def position
-    positions = self.object.entity_locations.pluck(:x, :y)
+  def location
+    l = { x: [], y: [] }
 
-    { 
-      x: positions.map(&:first), 
-      y: positions.map(&:second) 
-    }
+    self.object.location.coordinates.each do |x, y|
+      l[:x] << x.to_i
+      l[:y] << y.to_i
+    end
+
+    l
   end
 
   def receipts

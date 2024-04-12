@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :validatable
   include DeviseTokenAuth::Concerns::User
 
-  has_one :farm
+  has_one :farm, dependent: :destroy
 
   after_create { Farm.create(user: self) }
 end

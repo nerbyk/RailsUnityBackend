@@ -10,7 +10,7 @@ gem "bootsnap", require: false
 gem "active_model_serializers"
 gem "devise_token_auth", ">= 1.2.0", git: "https://github.com/lynndylanhurley/devise_token_auth"
 gem "interactor"
-
+gem "activerecord-postgis-adapter", "~> 9.0"
 
 group :development, :test do
   gem 'dotenv-rails'
@@ -31,3 +31,5 @@ group :test do
   gem "webmock"
   gem "faker"
 end
+
+

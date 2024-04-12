@@ -24,16 +24,15 @@ RSpec.describe "FarmsController", type: :request do
         
         expect(response_body[:entities]).to be_an(Array)
         expect(response_body[:entities][0]).to be_a(Hash)
-        expect(response_body[:entities][0]).to include(:id, :name, :position, :receipts)
+        expect(response_body[:entities][0]).to include(:id, :name, :location, :receipts)
 
-        
-        expect(response_body[:entities][0][:position]).to be_a(Hash)
-        expect(response_body[:entities][0][:position]).to include(:x, :y)
+        expect(response_body[:entities][0][:location]).to be_a(Hash)
+        expect(response_body[:entities][0][:location]).to include(:x, :y)
 
-        expect(response_body[:entities][0][:position][:x]).to be_an(Array)
-        expect(response_body[:entities][0][:position][:x][0]).to be_an(Integer)
-        expect(response_body[:entities][0][:position][:y]).to be_an(Array)
-        expect(response_body[:entities][0][:position][:y][0]).to be_an(Integer)
+        expect(response_body[:entities][0][:location][:x]).to be_an(Array)
+        expect(response_body[:entities][0][:location][:x][0]).to be_an(Integer)
+        expect(response_body[:entities][0][:location][:y]).to be_an(Array)
+        expect(response_body[:entities][0][:location][:y][0]).to be_an(Integer)
 
         expect(response_body[:entities][0][:receipts]).to be_an(Array)
         expect(response_body[:entities][0][:receipts][0]).to be_a(Hash)

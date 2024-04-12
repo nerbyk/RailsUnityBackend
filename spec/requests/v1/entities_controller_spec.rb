@@ -6,7 +6,7 @@ RSpec.describe "Entities", type: :request do
     sign_in(:user)
     
     let(:user) { create(:user) }
-    let(:entity) { create(:entity, user: user, farm: user.farm, position: old_position) }
+    let(:entity) { create(:entity, user: user, farm: user.farm, location: old_position) }
 
     let(:old_position) { { x: [1, 2, 3], y: [1,2,3] } }
     let(:new_position) { { x: [1, 2, 3], y: [4, 5, 6] } }
@@ -39,7 +39,7 @@ RSpec.describe "Entities", type: :request do
 
     context "when entity moved to position with another entity" do
       before do 
-        create(:entity, user: user, farm: user.farm, position: new_position) 
+        create(:entity, user: user, farm: user.farm, location: new_position) 
         do_request
       end
 
@@ -50,7 +50,7 @@ RSpec.describe "Entities", type: :request do
     end
 
     context "when entity is garbage" do
-      let(:entity) { create(:entity, user: user, farm: user.farm, position: old_position, name: Entity::GARBAGE_ENTITIES_NAMES.sample) }
+      let(:entity) { create(:entity, user: user, farm: user.farm, location: old_position, name: Entity::GARBAGE_ENTITIES_NAMES.sample) }
 
       before { do_request }
 

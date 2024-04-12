@@ -35,3 +35,5 @@
 /coverage
 .DS_Store
 .env*
+
+app/assets/gameplay_static.json
