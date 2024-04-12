@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   db:
-    image: postgis/postgis:16-3.4
+    image: postgres:16.2
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
     environment:
@@ -17,7 +17,7 @@ services:
         RAILS_ENV: development
         FARM_API_DATABASE_USERNAME: user
         FARM_API_DATABASE_PASSWORD: password
-        DATABASE_URL: "postgis://user:password@db:5432/farm_api_development"
+        DATABASE_URL: "postgres://user:password@db:5432/farm_api_development"
     volumes:
       - .:/app
     ports:
