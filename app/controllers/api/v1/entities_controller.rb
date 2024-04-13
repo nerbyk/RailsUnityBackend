@@ -13,7 +13,7 @@ module Api::V1
     def create
       CreateEntityInteractor.call(farm: current_user.farm, entity_params: entity_params).tap do |interactor|
         if interactor.success?
-          head :ok
+          render json: interactor.entity, status: :created
         else
           render json: {error: interactor.message}, status: :unprocessable_entity
         end

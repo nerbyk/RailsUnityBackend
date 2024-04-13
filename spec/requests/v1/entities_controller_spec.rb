@@ -22,10 +22,21 @@ RSpec.describe "Entities", type: :request do
     end
 
     context "when entity is valid" do
+      let(:response_body) { JSON.parse(response.body, symbolize_names: true) }
+
       before { do_request }
 
-      it "should return 200" do
-        expect(response).to have_http_status(:ok)
+      it "should return 201" do
+        expect(response).to have_http_status(:created)
+      end
+
+      it "should return created entity" do
+        expect(response_body).to include(:guid, :name, :location, :level)
+
+        expect(response_body[:name]).to eq("garden")
+        expect(response_body[:location]).to eq(location)
+        expect(response_body[:level]).to eq(1)
+        expect(response_body[:guid]).to be_present
       end
 
       it "should create entity" do

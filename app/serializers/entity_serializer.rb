@@ -1,5 +1,5 @@
 class EntitySerializer < ActiveModel::Serializer
-  attributes :guid, :name, :location, :receipts
+  attributes :guid, :name, :location, :receipts, :level
 
   def location
     {
