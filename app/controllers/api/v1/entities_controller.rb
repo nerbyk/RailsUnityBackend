@@ -1,5 +1,7 @@
 module Api::V1
   class EntitiesController < ApplicationController
+    before_action :authenticate_user!
+
     before_action :set_entity, only: %i[move destroy level_up]
 
     PERMITTED_PARAMS = [
