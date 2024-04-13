@@ -12,6 +12,18 @@ class Farm < ApplicationRecord
     items.insert_all(default_items)
   end
 
+  def spend_item(cost_object)
+    item = items.find_by(name: cost_object.item_name)
+
+    if item.amount >= cost_object.amount
+      item.decrement!(:amount, cost_object.amount)
+
+      true
+    else
+      false
+    end
+  end
+
   private
 
   def default_entities

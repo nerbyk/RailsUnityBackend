@@ -16,12 +16,7 @@ class DestroyEntityInteractor
   end
 
   def destroy_garbage_entity
-    cost = static_entity.destroy_cost
-    item = entity.farm.items.find_by(name: cost.item_name)
-
-    if item.amount >= cost.amount
-      item.decrement!(:amount, cost.amount)
-
+    if entity.farm.spend_item(static_entity.destroy_cost)
       destroy_entity
     else
       context.fail!(message: "Not enough resources")

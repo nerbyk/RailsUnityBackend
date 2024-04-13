@@ -6,7 +6,7 @@ module GameplayStatic
         GarbageEntity.new(type: type, levels: levels)
       when :factory
         FactoryEntity.new(type: type, levels: levels)
-      else 
+      else
         raise ArgumentError, "Unknown entity type: #{type}"
       end
     end
@@ -22,16 +22,20 @@ module GameplayStatic
         type == :factory
       end
     end
-  
+
     class GarbageEntity < BaseEntity
       def destroy_cost
         levels.first.cost
       end
     end
-  
+
     class FactoryEntity < BaseEntity
       def purchase_cost
         levels.first.cost
+      end
+
+      def upgrade_cost(to:)
+        levels[to - 1].cost
       end
     end
   end

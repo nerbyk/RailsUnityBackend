@@ -25,6 +25,12 @@ class Entity < ApplicationRecord
     [top, bottom]
   end
 
+  def level_up!
+    next_level = level + 1
+
+    update!(level: next_level)
+  end
+
   def location=(value)
     if value in { x: Array[Integer, *] => x, y: Array[Integer, *] => y}
       super(self.class.generate_location(x, y))

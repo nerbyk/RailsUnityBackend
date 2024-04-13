@@ -22,11 +22,11 @@ module GameplayStatic
   def self.entities
     @_entities ||= entities_statics.each_with_object({}) do |(name, data), hash|
       type = data.fetch(:type).to_sym
-      levels = data.fetch(:levels).map do |it| 
+      levels = data.fetch(:levels).map do |it|
         receipts = it.dig(:receipts).map { |it| GameplayStatic.receipts[it.to_s.to_sym] } if it.key?(:receipts)
         cost = Level::Cost[**it.fetch(:cost)]
 
-        Entity::BaseEntity::ELevel.new(receipts:, cost:) 
+        Entity::BaseEntity::ELevel.new(receipts:, cost:)
       end
 
       hash[name] = Entity.build(type:, levels:)
