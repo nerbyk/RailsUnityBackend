@@ -1,8 +1,8 @@
-require 'simplecov'
+require "simplecov"
 
 SimpleCov.start do
   minimum_coverage(95.0)
-  add_filter '/test/'
+  add_filter "/test/"
 end
 
 RSpec.configure do |config|

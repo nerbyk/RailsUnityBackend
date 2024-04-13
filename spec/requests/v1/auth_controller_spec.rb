@@ -4,7 +4,7 @@ RSpec.describe "Authentication", type: :request do
   describe "POST /api/v1/auth" do
     let(:created_user) { User.find_by(email: req_params[:email]) }
     let(:req_params) do
-      { email: "pupa@acc.com", password: "12345678", password_confirmation: "12345678" }
+      {email: "pupa@acc.com", password: "12345678", password_confirmation: "12345678"}
     end
 
     def do_request = post("/api/v1/auth", params: req_params)
@@ -24,7 +24,7 @@ RSpec.describe "Authentication", type: :request do
 
   describe "POST /api/v1/auth/sign_in" do
     let(:req_params) do
-      { email: "pupa@acc.com", password: "12345678" }
+      {email: "pupa@acc.com", password: "12345678"}
     end
 
     let!(:user) { User.create!(req_params) }

@@ -5,6 +5,6 @@ class Item < ApplicationRecord
   before_validation { self.user ||= farm&.user }
 
   def self.initial_items
-    JSON.parse(File.read(Rails.root.join('app', 'assets', 'default_items_map.json')), symbolize_names: true)
+    JSON.parse(Rails.root.join("app/assets/default_items_map.json").read, symbolize_names: true)
   end
 end

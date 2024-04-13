@@ -1,5 +1,5 @@
 class GameplayStatic
-  STATICS_JSON = Rails.root.join('app', 'assets', 'gameplay_static.json')  
+  STATICS_JSON = Rails.root.join("app/assets/gameplay_static.json")
 
   Cost = Data.define(:item_name, :amount)
   Level = Struct.new(:cost, :receipts, :action) do
@@ -22,7 +22,7 @@ class GameplayStatic
     end
   end
 
-  Entity  = GameObject.define(:type) do
+  Entity = GameObject.define(:type) do
     def initialize(type:, **)
       super(type: type.to_sym, **)
     end
@@ -31,7 +31,7 @@ class GameplayStatic
       type == :garbage
     end
   end
-  
+
   Receipt = GameObject.define(:item)
 
   def self.entities_statics

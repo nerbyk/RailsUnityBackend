@@ -1,17 +1,23 @@
-  require:
-    AllCops:
-      Exclude:
-        - db/**
-        - db/migrate/**
-        - bin/**
-        - vendor/**/*
+inherit_mode:
+  merge:
+    - Exclude
 
-    Layout/LineLength:
-      Max: 120
+require:
+  - standard
+  - standard-custom
+  - standard-performance
+  - rubocop-performance
+  - rubocop-rails
 
-    Metrics/BlockLength:
-      Exclude:
-        - config/**/*
+inherit_gem:
+  standard: config/base.yml
+  standard-performance: config/base.yml
+  standard-custom: config/base.yml
+  standard-rails: config/base.yml
 
-    Style/Documentation:
-      Enabled: false
+inherit_from:
+  - .rubocop/rspec.yml
+
+AllCops:
+  SuggestExtensions: false
+  TargetRubyVersion: 3.2

@@ -1,13 +1,13 @@
 module Api::V1
   class EntitiesController < ApplicationController
     before_action :set_entity, only: %i[move destroy]
-    
+
     def move
       MoveEntityInteractor.call(entity: @entity, new_position: move_entity_params).tap do |interactor|
         if interactor.success?
           head :ok
-        else 
-          render json: { error: interactor.message }, status: :unprocessable_entity
+        else
+          render json: {error: interactor.message}, status: :unprocessable_entity
         end
       end
     end
@@ -17,7 +17,7 @@ module Api::V1
         if interactor.success?
           head :ok
         else
-          render json: { error: interactor.message }, status: :unprocessable_entity
+          render json: {error: interactor.message}, status: :unprocessable_entity
         end
       end
     end

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+    :recoverable, :rememberable, :validatable
   include DeviseTokenAuth::Concerns::User
 
   has_one :farm, dependent: :destroy
@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
 
   after_create :init_default_farm
 
-  def init_default_farm 
+  def init_default_farm
     self.farm = Farm.create_initial_farm(self)
   end
 end

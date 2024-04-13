@@ -23,8 +23,8 @@ class DestroyEntityInteractor
       item.decrement!(:amount, cost.amount)
 
       destroy_entity
-    else 
-      context.fail!(message: 'Not enough resources')
+    else
+      context.fail!(message: "Not enough resources")
     end
   end
 

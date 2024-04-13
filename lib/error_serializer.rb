@@ -5,7 +5,7 @@ module ErrorSerializer
     json = {}
     new_hash = errors.to_hash(true).map do |k, v|
       v.map do |msg|
-        { status: '422', title: k, detail: msg }
+        {status: "422", title: k, detail: msg}
       end
     end
 

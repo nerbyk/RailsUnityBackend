@@ -5,7 +5,7 @@ module Requests
     module Extensions
       def sign_in(user)
         let(:auth_helpers_auth_token) {
-          self.public_send(user).create_new_auth_token
+          public_send(user).create_new_auth_token
         }
       end
     end
@@ -18,7 +18,7 @@ module Requests
       HTTP_HELPERS_TO_OVERRIDE.each do |helper|
         define_method(helper) do |path, **args|
           add_auth_headers(args)
-          args == {} ? super(path) : super(path, **args)
+          (args == {}) ? super(path) : super(path, **args)
         end
       end
 

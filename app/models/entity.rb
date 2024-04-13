@@ -9,13 +9,14 @@ class Entity < ApplicationRecord
   validate :location_overlap
 
   scope :overlaps, ->(farm_id, self_id, location) do
-    raw_box = "'#{location.values.join(',')}'::box"
+    raw_box = "'#{location.values.join(",")}'::box"
 
     where(farm_id: farm_id).where.not(id: self_id).where("location && #{raw_box}")
   end
-  
-  def self.default_entities_file = File.read(Rails.root.join('app', 'assets', 'default_entity_map.json'))
-  def self.initial_entities      = JSON.parse(default_entities_file, symbolize_names: true)
+
+  def self.default_entities_file = Rails.root.join("app/assets/default_entity_map.json").read
+
+  def self.initial_entities = JSON.parse(default_entities_file, symbolize_names: true)
 
   def self.generate_location(x_coords, y_coords)
     top = [x_coords.first, y_coords.first]
@@ -33,8 +34,8 @@ class Entity < ApplicationRecord
   end
 
   def location_overlap
-    return unless self.class.overlaps(farm_id, id, self.location).exists?
-      
+    return unless self.class.overlaps(farm_id, id, location).exists?
+
     errors.add(:location, "overlaps with another entity")
   end
 end

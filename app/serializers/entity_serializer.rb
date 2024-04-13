@@ -3,12 +3,12 @@ class EntitySerializer < ActiveModel::Serializer
 
   def location
     {
-      x: (self.object.location.x1.to_i..self.object.location.x2.to_i).to_a,
-      y: (self.object.location.y1.to_i..self.object.location.y2.to_i).to_a
+      x: (object.location.x1.to_i..object.location.x2.to_i).to_a,
+      y: (object.location.y1.to_i..object.location.y2.to_i).to_a
     }
   end
 
   def receipts
-    self.object.entity_receipts || []
+    object.entity_receipts || []
   end
 end

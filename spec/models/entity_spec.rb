@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Entity, type: :model do
   LocationFactory = Struct.new(:x1, :x2, :y1, :y2)
@@ -6,23 +6,23 @@ RSpec.describe Entity, type: :model do
   describe "associations" do
     subject { create(:entity) }
 
-    it { should belong_to(:farm) }
-    it { should have_many(:entity_receipts).dependent(:destroy) }
+    it { is_expected.to belong_to(:farm) }
+    it { is_expected.to have_many(:entity_receipts).dependent(:destroy) }
   end
 
   describe "scopes" do
     describe ".overlaps" do
       let!(:entity) { create(:entity) }
-      let!(:another_entity) { create(:entity, location: { x: [2], y: [2] }, farm: entity.farm) }
+      let!(:another_entity) { create(:entity, location: {x: [2], y: [2]}, farm: entity.farm) }
 
-      subject { Entity.overlaps(entity.farm_id, another_entity.id, entity.location)}
+      subject { Entity.overlaps(entity.farm_id, another_entity.id, entity.location) }
 
       it "returns overlap entities" do
         expect(subject).to eq([entity])
       end
 
       context "when there are no overlaps" do
-        let(:free_location) { LocationFactory.new(3,3,3,3) }
+        let(:free_location) { LocationFactory.new(3, 3, 3, 3) }
 
         subject { Entity.overlaps(entity.farm_id, entity.id, free_location) }
 
@@ -65,10 +65,10 @@ RSpec.describe Entity, type: :model do
     let(:expected_location) { [0.0, 0.0, 2.0, 2.0] }
 
     context "when location is a { x: Integer[] y: Integer[] }" do
-      subject { create(:entity, location: { x: (0..2).to_a, y: (0..2).to_a }) }
-      
+      subject { create(:entity, location: {x: (0..2).to_a, y: (0..2).to_a}) }
+
       it "sets the location box attribute" do
-       expect(subject.location.values).to eq(expected_location)
+        expect(subject.location.values).to eq(expected_location)
       end
     end
 
