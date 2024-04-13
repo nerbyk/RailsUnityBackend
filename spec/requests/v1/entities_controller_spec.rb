@@ -2,11 +2,13 @@ require 'rails_helper'
 
 RSpec.describe "Entities", type: :request do
   let(:user) { create(:user) }
-  let(:entity) { create(:entity, user: user, farm: user.farm, location: location) }
+  let(:entity) { create(:entity, name: "garden", user: user, farm: user.farm, location: location) }
   let(:location) { { x: [1, 2, 3], y: [1,2,3] } }
 
   before do
-    user.farm.entities.delete_all
+    allow(Farm).to receive(:create_initial_farm) do |u| # avoid creation of 2k initial entities
+      Farm.create(user: u)
+    end
   end
 
   describe "PATCH /api/v1/entities/:id/move" do
@@ -37,7 +39,7 @@ RSpec.describe "Entities", type: :request do
     end
 
     context "when entity moved to position with another entity" do
-      let!(:another_entity) { create(:entity, user: user, farm: user.farm, location: new_position)  }
+      let!(:another_entity) { create(:entity, location: new_position, farm: user.farm)  }
 
       before { do_request }
 
@@ -48,7 +50,7 @@ RSpec.describe "Entities", type: :request do
     end
 
     context "when entity is garbage" do
-      let(:entity) { create(:entity, user: user, farm: user.farm, location: location, name: Entity::GARBAGE_ENTITIES_NAMES.sample) }
+      let(:entity) { create(:entity, location: location, name: 'tree', farm: user.farm) }
 
       before { do_request }
 
@@ -67,8 +69,8 @@ RSpec.describe "Entities", type: :request do
     end
 
     context "when garbage entity" do
-      let(:entity) { create(:entity, user:, location:, farm: user.farm, name: "tree") }
-      let(:item) { user.farm.items.find_by(name: "coins") }
+      let(:entity) { create(:entity, location:, farm: user.farm, name: "tree") }
+      let(:item) { create(:item, name: "coins", farm: user.farm) }
 
       context "when farm has enough resources" do
         before { item.update(amount: 100); do_request }

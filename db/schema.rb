@@ -15,6 +15,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_11_075133) do
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
+  # These are the common tables
   create_table "entities", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "farm_id", null: false
@@ -56,7 +57,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_11_075133) do
     t.index ["farm_id"], name: "index_items_on_farm_id"
     t.index ["name", "farm_id"], name: "index_items_on_name_and_farm_id", unique: true
     t.index ["user_id"], name: "index_items_on_user_id"
-    t.check_constraint "amount >= 0"
   end
 
   create_table "users", force: :cascade do |t|

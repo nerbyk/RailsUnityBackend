@@ -8,6 +8,12 @@ class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
   has_one :farm, dependent: :destroy
+  has_many :items, through: :farm
+  has_many :entities, through: :farm
 
-  after_create { Farm.create(user: self) }
+  after_create :init_default_farm
+
+  def init_default_farm 
+    self.farm = Farm.create_initial_farm(self)
+  end
 end

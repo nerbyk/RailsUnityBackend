@@ -8,7 +8,7 @@ class DestroyEntityInteractor
   end
 
   def call
-    if static_entity.type == :garbage
+    if static_entity.garbage?
       destroy_garbage_entity
     else
       destroy_entity

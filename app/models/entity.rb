@@ -1,17 +1,18 @@
 class Entity < ApplicationRecord
   belongs_to :user
   belongs_to :farm
+
+  before_validation { self.user ||= farm&.user }
+
   has_many :entity_receipts, dependent: :destroy
 
   validate :location_overlap
 
-  scope :overlaps, ->(farm_id, id, location) do
-    box_type = "'#{location.values.join(',')}'::box"
+  scope :overlaps, ->(farm_id, self_id, location) do
+    raw_box = "'#{location.values.join(',')}'::box"
 
-    where(farm_id: farm_id).where.not(id: id).where("location && #{box_type}")
+    where(farm_id: farm_id).where.not(id: self_id).where("location && #{raw_box}")
   end
-
-  GARBAGE_ENTITIES_NAMES = %w[tree stone rock]
   
   def self.default_entities_file = File.read(Rails.root.join('app', 'assets', 'default_entity_map.json'))
   def self.initial_entities      = JSON.parse(default_entities_file, symbolize_names: true)
@@ -25,14 +26,14 @@ class Entity < ApplicationRecord
 
   def location=(value)
     if value in { x: Array[Integer, *] => x, y: Array[Integer, *] => y}
-      super(Entity.generate_location(x, y))
+      super(self.class.generate_location(x, y))
     else
       super
     end
   end
 
   def location_overlap
-    return unless Entity.overlaps(farm_id, id, self.location).exists?
+    return unless self.class.overlaps(farm_id, id, self.location).exists?
       
     errors.add(:location, "overlaps with another entity")
   end

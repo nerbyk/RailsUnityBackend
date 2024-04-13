@@ -3,7 +3,9 @@ class Farm < ApplicationRecord
   has_many :entities, dependent: :delete_all
   has_many :items, dependent: :destroy
 
-  after_create :create_initial_game_state
+  def self.create_initial_farm(user)
+    Farm.create(user:).tap(&:create_initial_game_state)
+  end
 
   def create_initial_game_state
     entities.insert_all(default_entities)

@@ -26,6 +26,10 @@ class GameplayStatic
     def initialize(type:, **)
       super(type: type.to_sym, **)
     end
+
+    def garbage?
+      type == :garbage
+    end
   end
   
   Receipt = GameObject.define(:item)
