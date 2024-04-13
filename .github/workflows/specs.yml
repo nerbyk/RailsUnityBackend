@@ -46,7 +46,8 @@ jobs:
           RAILS_ENV: test
           DISABLE_SPRING: 1
           PGHOST: localhost
+          CI: true
         run: |
           cp config/database.ci.yml config/database.yml
           bundle exec rails db:schema:load
-          bundle exec rspec --format progress
+          bundle exec rspec --format progress --fail-fast
