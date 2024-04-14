@@ -10,7 +10,10 @@ gem "bootsnap", require: false
 gem "active_model_serializers"
 gem "devise_token_auth", ">= 1.2.0", git: "https://github.com/lynndylanhurley/devise_token_auth"
 gem "interactor"
+gem "interactor-rails"
 gem "torque-postgresql"
+gem "sidekiq"
+gem "sidekiq-cron"
 
 group :development, :test do
   gem "dotenv-rails"
@@ -28,6 +31,8 @@ end
 
 group :development do
   gem "web-console"
+  gem "ruby-lsp-rails"
+  gem "ruby-lsp-rspec"
 end
 
 group :test do
