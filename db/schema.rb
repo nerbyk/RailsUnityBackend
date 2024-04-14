@@ -34,9 +34,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_11_075133) do
   create_table "entity_receipts", force: :cascade do |t|
     t.bigint "entity_id", null: false
     t.string "name", null: false
-    t.string "state", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer "status", default: 0, null: false
+    t.integer "level", default: 1, null: false
+    t.datetime "completed_at"
+    t.index ["completed_at", "status"], name: "index_entity_receipts_on_completed_at_and_status"
     t.index ["entity_id"], name: "index_entity_receipts_on_entity_id"
   end
 

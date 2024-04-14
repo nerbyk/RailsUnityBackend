@@ -1,0 +1,4 @@
+receipt_completion_job:
+  cron: "*/5 * * * * *"
+  class: "ReceiptsCompletionJob"
+  queue: "default"
