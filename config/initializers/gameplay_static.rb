@@ -1,1 +1,1 @@
-require './lib/gameplay_static'
+require "./lib/gameplay_static"

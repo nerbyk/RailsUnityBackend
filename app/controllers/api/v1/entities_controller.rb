@@ -4,6 +4,9 @@ module Api::V1
 
     before_action :set_entity, only: %i[move destroy level_up]
 
+    before_action -> { set_entity_static(entity_params[:name]) }, only: %i[create]
+    before_action -> { set_entity_static(@entity.name) }, only: %i[level_up destroy move]
+
     PERMITTED_PARAMS = [
       :name,
       location: [
@@ -13,7 +16,11 @@ module Api::V1
     ].freeze
 
     def create
-      CreateEntityInteractor.call(farm: current_user.farm, entity_params: entity_params).tap do |interactor|
+      CreateEntityInteractor.call(
+        farm: current_user.farm,
+        entity_static: @entity_static,
+        entity_params: entity_params
+      ).tap do |interactor|
         if interactor.success?
           render json: interactor.entity, status: :created
         else
@@ -23,7 +30,7 @@ module Api::V1
     end
 
     def level_up
-      UpgradeEntityInteractor.call(entity: @entity).tap do |interactor|
+      UpgradeEntityInteractor.call(entity: @entity, entity_static: @entity_static).tap do |interactor|
         if interactor.success?
           head :ok
         else
@@ -33,7 +40,11 @@ module Api::V1
     end
 
     def move
-      MoveEntityInteractor.call(entity: @entity, new_position: entity_params.fetch(:location)).tap do |interactor|
+      MoveEntityInteractor.call(
+        entity: @entity,
+        entity_static: @entity_static,
+        new_position: entity_params.fetch(:location)
+      ).tap do |interactor|
         if interactor.success?
           head :ok
         else
@@ -43,7 +54,7 @@ module Api::V1
     end
 
     def destroy
-      DestroyEntityInteractor.call(entity: @entity).tap do |interactor|
+      DestroyEntityInteractor.call(entity: @entity, entity_static: @entity_static).tap do |interactor|
         if interactor.success?
           head :ok
         else
@@ -58,11 +69,14 @@ module Api::V1
       @entity = current_user.farm.entities.find_by(guid: params[:id])
     end
 
+    def set_entity_static(name)
+      @entity_static = GameplayStatic.entities[name.to_sym]
+    end
+
     def entity_params
       params.require(:data).permit(PERMITTED_PARAMS).to_h.deep_symbolize_keys.tap do |it|
         next if it[:location].blank?
 
-        it[:location].transform_keys!(&:to_sym)
         it[:location] = it[:location].each { |_, v| v.map!(&:to_i) }
       end
     end

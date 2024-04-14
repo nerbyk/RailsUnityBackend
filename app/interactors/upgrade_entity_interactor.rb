@@ -4,8 +4,6 @@ class UpgradeEntityInteractor
   delegate :entity, :entity_static, to: :context
 
   before do
-    context.entity_static = GameplayStatic.entities[entity.name.to_sym]
-
     context.fail!(message: "This entity can't be upgraded") unless entity_static.respond_to?(:upgrade_cost)
   end
 

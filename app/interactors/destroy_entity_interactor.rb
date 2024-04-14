@@ -1,14 +1,10 @@
 class DestroyEntityInteractor
   include TransactionalInteractor
 
-  delegate :entity, :static_entity, to: :context
-
-  before do
-    context.static_entity = GameplayStatic.entities[entity.name.to_sym]
-  end
+  delegate :entity, :entity_static, to: :context
 
   def call
-    if static_entity.garbage?
+    if entity_static.garbage?
       destroy_garbage_entity
     else
       destroy_entity
@@ -16,7 +12,7 @@ class DestroyEntityInteractor
   end
 
   def destroy_garbage_entity
-    if entity.farm.spend_item(static_entity.destroy_cost)
+    if entity.farm.spend_item(entity_static.destroy_cost)
       destroy_entity
     else
       context.fail!(message: "Not enough resources")
