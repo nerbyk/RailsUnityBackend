@@ -3,13 +3,7 @@ class GameplayStatic
 
   UndefinedStaticError = Class.new(StandardError)
 
-  class Level < Struct.new(:cost)
-    Cost = Data.define(:item_name, :amount)
-
-    def initialize(cost)
-      super(cost: Cost[**cost])
-    end
-  end
+  Cost = Data.define(:item_name, :amount)
 
   def self.entities = @_entities
 
@@ -29,14 +23,9 @@ class GameplayStatic
   def self.preload_entities(statics)
     require_relative "gameplay_static/entity"
 
-    @_entities = statics.each_with_object(static_hash) do |(name, data), hash|
+    @_entities = statics.each_with_object(static_hash_for(:entity)) do |(name, data), hash|
       type = data.fetch(:type).to_sym
-      levels = data.fetch(:levels).map do |it|
-        rcpts = it.dig(:receipts).map { |it| receipts[it.to_s.to_sym] } if it.key?(:receipts)
-        cost = Level::Cost[**it.fetch(:cost)]
-
-        Entity::BaseEntity::ELevel.new(receipts: rcpts, cost:)
-      end
+      levels = entity_level_build_options(data.fetch(:levels))
 
       hash[name] = Entity.build(type:, levels:)
     end
@@ -47,9 +36,9 @@ class GameplayStatic
   def self.preload_receipts(statics)
     require_relative "gameplay_static/receipt"
 
-    @_receipts = statics.each_with_object(static_hash) do |(id, data), hash|
+    @_receipts = statics.each_with_object(static_hash_for(:receipt)) do |(id, data), hash|
       item_name = data.fetch(:item_name)
-      levels = data.fetch(:levels).map { |it| Level.new(**it.fetch(:cost)) }
+      levels = receipt_level_build_options(data.fetch(:levels))
 
       hash[id] = Receipt.new(item_name:, levels:)
     end
@@ -57,8 +46,30 @@ class GameplayStatic
     @_receipts.freeze
   end
 
-  def self.static_hash
-    Hash.new { |hash, key| raise UndefinedStaticError, "Undefined static: #{key}" }
+  def self.entity_level_build_options(levels)
+    levels.map do |level|
+      cost = Cost[**level.fetch(:cost)]
+      rcps = level[:receipts]&.map do |id| 
+        id_sym = id.to_s.to_sym
+
+        [id_sym, receipts[id_sym]] 
+      end.to_h
+
+      Entity::BaseEntity::Level.new(cost:, receipts: rcps)
+    end
+  end
+
+  def self.receipt_level_build_options(levels)
+    levels.map do |level|
+      cost = Cost[**level.fetch(:cost)]
+      time = level.fetch(:time)
+
+      Receipt::Level.new(cost:, time:)
+    end
+  end
+
+  def self.static_hash_for(name)
+    Hash.new { |hash, key| raise UndefinedStaticError, "Undefined #{name} name: #{key}" }
   end
 end
 

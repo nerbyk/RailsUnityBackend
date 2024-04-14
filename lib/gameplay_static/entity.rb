@@ -12,7 +12,7 @@ class GameplayStatic
     end
 
     class BaseEntity < Data.define(:type, :levels)
-      ELevel = Struct.new(*Level.members, :receipts)
+      Level = Struct.new(:cost, :receipts)
 
       def garbage?
         type == :garbage
