@@ -1,4 +1,4 @@
-module GameplayStatic
+class GameplayStatic
   class Entity
     def self.build(type:, levels:)
       case type

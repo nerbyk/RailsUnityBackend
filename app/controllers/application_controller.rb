@@ -5,6 +5,7 @@ class ApplicationController < ActionController::API
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from ActiveRecord::RecordInvalid, with: :unprocessable_entity
+  rescue_from GameplayStatic::UndefinedStaticError, with: :unknown_static
 
   before_action :configure_permitted_parameters, if: :devise_controller?
 
@@ -16,6 +17,10 @@ class ApplicationController < ActionController::API
 
   def unprocessable_entity(error)
     render json: ErrorSerializer.serialize(error.record.errors), status: :unprocessable_entity
+  end
+
+  def unknown_static(error)
+    render json: {error: error.message}, status: :unprocessable_entity
   end
 
   protected
