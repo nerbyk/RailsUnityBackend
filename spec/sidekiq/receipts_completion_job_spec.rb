@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe ReceiptsCompletionJob, type: :job do
   describe "#perform" do
@@ -8,7 +8,7 @@ RSpec.describe ReceiptsCompletionJob, type: :job do
     before do
       [user1, user2].each do |u|
         EntityReceipt.insert_all(u.farm.entities.ids.map do |entity_id|
-          { entity_id: entity_id, name: "101", status: 0, updated_at: Time.current - ReceiptsCompletionJob::COMPLETION_TIMEOUT }
+          {entity_id: entity_id, name: "101", status: 0, completed_at: 1.minute.ago}
         end)
       end
     end

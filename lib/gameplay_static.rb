@@ -49,11 +49,11 @@ class GameplayStatic
   def self.entity_level_build_options(levels)
     levels.map do |level|
       cost = Cost[**level.fetch(:cost)]
-      rcps = level[:receipts]&.map do |id| 
+      rcps = level[:receipts]&.each_with_object(static_hash_for(:receipt)) do |id, hash|
         id_sym = id.to_s.to_sym
 
-        [id_sym, receipts[id_sym]] 
-      end.to_h
+        hash[id_sym] = receipts[id_sym]
+      end
 
       Entity::BaseEntity::Level.new(cost:, receipts: rcps)
     end

@@ -15,7 +15,7 @@ class Farm < ApplicationRecord
   def spend_item(cost_object)
     item = items.find_by(name: cost_object.item_name)
 
-    if item.amount >= cost_object.amount
+    if item && item.amount >= cost_object.amount
       item.decrement!(:amount, cost_object.amount)
 
       true

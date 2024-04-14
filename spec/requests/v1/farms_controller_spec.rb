@@ -37,7 +37,7 @@ RSpec.describe "FarmsController", type: :request do
         response_body[:entities].find { |entity| entity[:guid] == receipt.entity.guid }.tap do |entity|
           expect(entity[:receipts]).to be_an(Array)
           expect(entity[:receipts][0]).to be_a(Hash)
-          expect(entity[:receipts][0]).to include(:id, :name, :state, :updated_at, :created_at)
+          expect(entity[:receipts][0]).to include(:id, :name, :status, :completed_at)
         end
 
         expect(response_body[:items][0]).to include(:name, :amount)

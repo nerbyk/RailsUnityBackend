@@ -14,6 +14,8 @@ class Entity < ApplicationRecord
     where(farm_id: farm_id).where.not(id: self_id).where("location && #{raw_box}")
   end
 
+  alias_method :receipts, :entity_receipts
+
   def self.default_entities_file = Rails.root.join("app/assets/default_entity_map.json").read
 
   def self.initial_entities = JSON.parse(default_entities_file, symbolize_names: true)
