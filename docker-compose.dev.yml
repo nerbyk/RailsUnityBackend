@@ -11,7 +11,9 @@ services:
   redis: 
     image: redis:6.2
   sidekiq:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     command: bundle exec sidekiq
     depends_on:
       - redis
