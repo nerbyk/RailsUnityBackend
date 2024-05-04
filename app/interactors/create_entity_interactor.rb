@@ -10,10 +10,9 @@ class CreateEntityInteractor
   end
 
   def call
-    if farm.spend_item(entity_static.purchase_cost)
-      farm.entities.create!(entity_params).tap { |entity| context.entity = entity }
-    else
-      context.fail!(message: "Not enough resources")
+    farm.spend_item!(entity_static.purchase_cost)
+    farm.entities.create!(entity_params).tap do |entity|
+      context.entity = entity
     end
   end
 end

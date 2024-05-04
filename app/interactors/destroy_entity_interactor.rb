@@ -12,11 +12,8 @@ class DestroyEntityInteractor
   end
 
   def destroy_garbage_entity
-    if entity.farm.spend_item(entity_static.destroy_cost)
-      destroy_entity
-    else
-      context.fail!(message: "Not enough resources")
-    end
+    entity.farm.spend_item!(entity_static.destroy_cost)
+    destroy_entity
   end
 
   def destroy_entity

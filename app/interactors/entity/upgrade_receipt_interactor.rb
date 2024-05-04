@@ -8,11 +8,8 @@ class Entity::UpgradeReceiptInteractor
   end
 
   def call
-    if receipt.entity.farm.spend_item(receipt_upgrade_level.cost)
-      receipt.level_up!(receipt_upgrade_level.time)
-    else
-      context.fail!(message: "Not enough resources")
-    end
+    receipt.entity.farm.spend_item!(receipt_upgrade_level.cost)
+    receipt.level_up!(receipt_upgrade_level.time)
   end
 
   private def receipt_upgrade_level = receipt_static.levels[receipt.level]

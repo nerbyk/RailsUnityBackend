@@ -8,11 +8,8 @@ class UpgradeEntityInteractor
   end
 
   def call
-    if entity.farm.spend_item(upgrade_cost)
-      entity.level_up!
-    else
-      context.fail!(message: "Not enough resources")
-    end
+    entity.farm.spend_item!(upgrade_cost)
+    entity.level_up!
   end
 
   private def upgrade_cost = entity_static.upgrade_cost(to: entity.level + 1)

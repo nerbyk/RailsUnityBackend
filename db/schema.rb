@@ -59,6 +59,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_11_075133) do
     t.index ["farm_id"], name: "index_items_on_farm_id"
     t.index ["name", "farm_id"], name: "index_items_on_name_and_farm_id", unique: true
     t.index ["user_id"], name: "index_items_on_user_id"
+    t.check_constraint "amount >= 0", name: "amount_non_negative"
   end
 
   create_table "users", force: :cascade do |t|

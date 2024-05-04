@@ -9,14 +9,11 @@ class Entity::CreateReceiptInteractor
   end
 
   def call
-    if entity.farm.spend_item(receipt_initial_level.cost)
-      entity.receipts.create!(
-        name: receipt_name,
-        completed_at: (Time.current + receipt_initial_level.time)
-      ).tap { |receipt| context.receipt = receipt }
-    else
-      context.fail!(message: "Not enough resources")
-    end
+    entity.farm.spend_item!(receipt_initial_level.cost)
+    entity.receipts.create!(
+      name: receipt_name,
+      completed_at: (Time.current + receipt_initial_level.time)
+    ).tap { |receipt| context.receipt = receipt }
   end
 
   private def receipt_initial_level = receipt_static.levels.first
