@@ -31,10 +31,14 @@ class Entity < ApplicationRecord
     GameplayStatic.entities[name.to_sym]
   end
 
-  def schema = GameplayStatic.entities[name.to_sym]
+  def schema = self.class.schema_for(name)
 
   def level_up!
-    update!(level: level + 1)
+    if (new_level = level + 1) <= schema.levels.count
+      update!(level: new_level)
+    else
+      errors.add(:level, "max level reached")
+    end
   end
 
   def location=(value)

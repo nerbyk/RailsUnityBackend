@@ -59,24 +59,56 @@ RSpec.describe Entity, type: :model do
         expect(location).to eq([[0, 0], [10, 10]])
       end
     end
-  end
 
-  describe "location=" do
-    let(:expected_location) { [0.0, 0.0, 2.0, 2.0] }
+    describe "#location=" do
+      let(:expected_location) { [0.0, 0.0, 2.0, 2.0] }
 
-    context "when location is a { x: Integer[] y: Integer[] }" do
-      subject { create(:entity, location: {x: (0..2).to_a, y: (0..2).to_a}) }
+      context "when location is a { x: Integer[] y: Integer[] }" do
+        subject { create(:entity, location: {x: (0..2).to_a, y: (0..2).to_a}) }
 
-      it "sets the location box attribute" do
-        expect(subject.location.values).to eq(expected_location)
+        it "sets the location box attribute" do
+          expect(subject.location.values).to eq(expected_location)
+        end
+      end
+
+      context "when location is torque-postgresql box" do
+        subject { create(:entity, location: [[0, 0], [2, 2]]) }
+
+        it "sets the location box attribute" do
+          expect(subject.location.values).to eq(expected_location)
+        end
       end
     end
 
-    context "when location is torque-postgresql box" do
-      subject { create(:entity, location: [[0, 0], [2, 2]]) }
+    describe "#level_up!" do
+      subject { entity.level_up! }
 
-      it "sets the location box attribute" do
-        expect(subject.location.values).to eq(expected_location)
+      context "when level up is allowed" do
+        let(:entity) { create(:entity, name: :garden, level: entity_schema.levels.size - 1) }
+        let(:entity_schema) { described_class.schema_for(:garden) }
+
+        it "increases entity level by 1" do
+          expect { subject }.to change { entity.level }.by(1)
+        end
+      end
+
+      context "when level up is NOT allowed" do
+        context "when max level reached" do
+          let(:entity) { create(:entity, name: :garden, level: entity_schema.levels.size) }
+          let(:entity_schema) { described_class.schema_for(:garden) }
+
+          it "doesn't increase level" do
+            expect { subject }.not_to change { entity.level }
+          end
+        end
+
+        context "when entity is NOT upgradable" do
+          let(:entity) { create(:entity, name: :rock) }
+
+          it "doesn't increase level" do
+            expect { subject }.not_to change { entity.level }
+          end
+        end
       end
     end
   end
