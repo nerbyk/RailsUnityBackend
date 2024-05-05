@@ -1,7 +1,7 @@
 class Entity::UpgradeReceiptInteractor
   include TransactionalInteractor
 
-  delegate :receipt, :receipt_static, to: :context
+  delegate :receipt, :receipt_schema, to: :context
 
   before do
     context.fail!(message: "This receipt can't be upgraded yet") unless receipt.completed?
@@ -12,5 +12,5 @@ class Entity::UpgradeReceiptInteractor
     receipt.level_up!(receipt_upgrade_level.time)
   end
 
-  private def receipt_upgrade_level = receipt_static.levels[receipt.level]
+  private def receipt_upgrade_level = receipt_schema.levels[receipt.level]
 end

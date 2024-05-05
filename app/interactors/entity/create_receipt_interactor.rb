@@ -1,11 +1,11 @@
 class Entity::CreateReceiptInteractor
   include TransactionalInteractor
 
-  delegate :entity, :entity_static, :receipt_name, to: :context
-  delegate :receipt_static, to: :context
+  delegate :entity, :entity_schema, :receipt_name, to: :context
+  delegate :receipt_schema, to: :context
 
   before do
-    context.receipt_static = entity_static.levels.first.receipts[receipt_name.to_sym]
+    context.receipt_schema = entity_schema.levels.first.receipts[receipt_name.to_sym]
   end
 
   def call
@@ -16,5 +16,5 @@ class Entity::CreateReceiptInteractor
     ).tap { |receipt| context.receipt = receipt }
   end
 
-  private def receipt_initial_level = receipt_static.levels.first
+  private def receipt_initial_level = receipt_schema.levels.first
 end

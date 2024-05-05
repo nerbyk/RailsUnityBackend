@@ -4,9 +4,7 @@ module Api::V1::Entity
 
     before_action :set_entity
     before_action :set_receipt, only: %i[level_up]
-
-    before_action :set_entity_static
-    before_action :set_receipt_static, only: %i[level_up]
+    before_action :set_receipt_schema, only: %i[level_up]
 
     PERMITTED_PARAMS = [
       :name
@@ -15,7 +13,7 @@ module Api::V1::Entity
     def create
       Entity::CreateReceiptInteractor.call(
         entity: @entity,
-        entity_static: @entity_static,
+        entity_schema: @entity.schema,
         receipt_name: receipt_params.fetch(:name)
       ).tap do |interactor|
         if interactor.success?
@@ -29,7 +27,7 @@ module Api::V1::Entity
     def level_up
       Entity::UpgradeReceiptInteractor.call(
         receipt: @receipt,
-        receipt_static: @receipt_static
+        receipt_schema: @receipt_schema
       ).tap do |interactor|
         if interactor.success?
           head :ok
@@ -49,12 +47,8 @@ module Api::V1::Entity
       @receipt = @entity.receipts.find(params[:receipt_id])
     end
 
-    def set_entity_static
-      @entity_static = GameplayStatic.entities[@entity.name.to_sym]
-    end
-
-    def set_receipt_static
-      @receipt_static = @entity_static.levels[@entity.level - 1].receipts[@receipt.name.to_sym]
+    def set_receipt_schema
+      @receipt_schema = @entity.schema.levels[@entity.level - 1].receipts[@receipt.name.to_sym]
     end
 
     def receipt_params

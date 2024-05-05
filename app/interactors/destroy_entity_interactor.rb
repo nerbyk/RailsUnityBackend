@@ -1,10 +1,10 @@
 class DestroyEntityInteractor
   include TransactionalInteractor
 
-  delegate :entity, :entity_static, to: :context
+  delegate :entity, :entity_schema, to: :context
 
   def call
-    if entity_static.garbage?
+    if entity_schema.garbage?
       destroy_garbage_entity
     else
       destroy_entity
@@ -12,7 +12,7 @@ class DestroyEntityInteractor
   end
 
   def destroy_garbage_entity
-    entity.farm.spend_item!(entity_static.destroy_cost)
+    entity.farm.spend_item!(entity_schema.destroy_cost)
     destroy_entity
   end
 

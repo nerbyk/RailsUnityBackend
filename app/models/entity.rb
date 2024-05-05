@@ -27,10 +27,14 @@ class Entity < ApplicationRecord
     [top, bottom]
   end
 
-  def level_up!
-    next_level = level + 1
+  def self.schema_for(name)
+    GameplayStatic.entities[name.to_sym]
+  end
 
-    update!(level: next_level)
+  def schema = GameplayStatic.entities[name.to_sym]
+
+  def level_up!
+    update!(level: level + 1)
   end
 
   def location=(value)

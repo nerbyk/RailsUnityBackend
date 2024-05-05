@@ -3,6 +3,8 @@ class EntityReceipt < ApplicationRecord
 
   enum status: {pending: 0, completed: 1}
 
+  def schema = GameplayStatic.receipts[name.to_sym]
+
   def level_up!(duration)
     update!(
       level: level + 1,
