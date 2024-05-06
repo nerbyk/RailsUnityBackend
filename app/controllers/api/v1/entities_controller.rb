@@ -3,7 +3,6 @@ module Api::V1
     before_action :authenticate_user!
 
     before_action :set_entity, only: %i[move destroy level_up]
-    before_action :set_entity_schema
 
     PERMITTED_PARAMS = [
       :name,
@@ -16,7 +15,6 @@ module Api::V1
     def create
       CreateEntityInteractor.call(
         farm: current_user.farm,
-        entity_schema: @entity_schema,
         entity_params: entity_params
       ).tap do |interactor|
         if interactor.success?
@@ -28,7 +26,7 @@ module Api::V1
     end
 
     def level_up
-      UpgradeEntityInteractor.call(entity: @entity, entity_schema: @entity_schema).tap do |interactor|
+      UpgradeEntityInteractor.call(entity: @entity).tap do |interactor|
         if interactor.success?
           head :ok
         else
@@ -40,7 +38,6 @@ module Api::V1
     def move
       MoveEntityInteractor.call(
         entity: @entity,
-        entity_schema: @entity_schema,
         new_position: entity_params.fetch(:location)
       ).tap do |interactor|
         if interactor.success?
@@ -52,7 +49,7 @@ module Api::V1
     end
 
     def destroy
-      DestroyEntityInteractor.call(entity: @entity, entity_schema: @entity_schema).tap do |interactor|
+      DestroyEntityInteractor.call(entity: @entity).tap do |interactor|
         if interactor.success?
           head :ok
         else
@@ -65,14 +62,6 @@ module Api::V1
 
     def set_entity
       @entity = current_user.farm.entities.find_by(guid: params[:id])
-    end
-
-    def set_entity_schema
-      @entity_schema = if defined?(@entity)
-        @entity.schema
-      else
-        ::Entity.schema_for(entity_params[:name])
-      end
     end
 
     def entity_params

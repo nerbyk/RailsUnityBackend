@@ -35,7 +35,7 @@ class GameplayStatic
       end
 
       def upgrade_cost(to:)
-        levels[to - 1].cost
+        levels[to - 1]&.cost
       end
     end
   end

@@ -9,7 +9,7 @@ class Entity::CreateReceiptInteractor
   end
 
   def call
-    entity.farm.spend_item!(receipt_initial_level.cost)
+    entity.farm.spend_item!(**receipt_initial_level.cost.to_h)
     entity.receipts.create!(
       name: receipt_name,
       completed_at: (Time.current + receipt_initial_level.time)

@@ -8,7 +8,7 @@ class Entity::UpgradeReceiptInteractor
   end
 
   def call
-    receipt.entity.farm.spend_item!(receipt_upgrade_level.cost)
+    receipt.entity.farm.spend_item!(**receipt_upgrade_level.cost.to_h)
     receipt.level_up!(receipt_upgrade_level.time)
   end
 

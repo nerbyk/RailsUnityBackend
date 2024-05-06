@@ -143,6 +143,19 @@ RSpec.describe "Entities", type: :request do
         expect(response.body).to include("This entity can't be upgraded")
       end
     end
+
+    context "when entity max level reached" do
+      let(:entity) {
+        create(:entity, name: :garden, farm: user.farm,
+          level: Entity.schema_for(:garden).levels.count)
+      }
+
+      before { do_request }
+
+      it "should return 422" do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
   end
 
   describe "PATCH /api/v1/entities/:id/move" do
@@ -180,7 +193,7 @@ RSpec.describe "Entities", type: :request do
 
       it "should return 422" do
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include("Position is already taken")
+        expect(response.body).to include("Location overlaps with another entity")
       end
     end
 
@@ -191,7 +204,7 @@ RSpec.describe "Entities", type: :request do
 
       it "should return 422" do
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include("Garbage entities can't be moved")
+        expect(response.body).to include("garbage entity can't be moved")
       end
     end
   end

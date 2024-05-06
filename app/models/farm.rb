@@ -12,8 +12,10 @@ class Farm < ApplicationRecord
     items.insert_all(default_items)
   end
 
-  def spend_item!(cost_object)
-    items.find_by!(name: cost_object.item_name).decrement_by!(cost_object.amount)
+  def spend_item!(item_name:, amount:)
+    items.find_by!(name: item_name).tap do |item|
+      item.update!(amount: item.amount - amount)
+    end
   end
 
   private

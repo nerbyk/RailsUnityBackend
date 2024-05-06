@@ -42,11 +42,68 @@ RSpec.describe Entity, type: :model do
   end
 
   describe "validations" do
-    let!(:entity) { create(:entity) }
+    context "#location_overlap" do
+      let!(:entity) { create(:entity) }
 
-    it "validates location overlap" do
-      another_entity = build(:entity, location: entity.location, farm: entity.farm)
-      expect(another_entity).to be_invalid
+      context "when new entity does NOT overlap w/ existing" do
+        subject { build(:entity, location: {x: [50, 51], y: [50, 51]}, farm: entity.farm) }
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when new entity location overlaps w/ existing" do
+        subject { build(:entity, location: entity.location, farm: entity.farm) }
+
+        it { is_expected.to be_invalid }
+      end
+    end
+
+    context "#location_movability" do
+      subject do
+        entity.location = {x: [0, 1], y: [1, 2]}
+        entity
+      end
+
+      context "when entity type is movable" do
+        let(:entity) { create(:entity, name: "garden") }
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when entity type is NOT movable" do
+        let(:entity) { create(:entity, name: :tree) }
+
+        it { is_expected.to be_invalid }
+      end
+    end
+
+    context "#level_up" do
+      subject do
+        entity.level += 1
+        entity
+      end
+
+      context "when level up is allowed" do
+        let(:entity) { create(:entity, name: :garden, level: entity_schema.levels.size - 1) }
+        let(:entity_schema) { described_class.schema_for(:garden) }
+
+        it { is_expected.to be_valid }
+      end
+
+      context "when level up is NOT allowed" do
+        context "when max level reached" do
+          let(:entity) { create(:entity, name: :garden, level: entity_schema.levels.size) }
+          let(:entity_schema) { described_class.schema_for(:garden) }
+
+          it { is_expected.to be_invalid }
+        end
+
+        context "when entity is NOT upgradable" do
+          let(:entity) { create(:entity, name: :rock) }
+
+          it { is_expected.to be_invalid }
+        end
+      end
     end
   end
 
@@ -76,38 +133,6 @@ RSpec.describe Entity, type: :model do
 
         it "sets the location box attribute" do
           expect(subject.location.values).to eq(expected_location)
-        end
-      end
-    end
-
-    describe "#level_up!" do
-      subject { entity.level_up! }
-
-      context "when level up is allowed" do
-        let(:entity) { create(:entity, name: :garden, level: entity_schema.levels.size - 1) }
-        let(:entity_schema) { described_class.schema_for(:garden) }
-
-        it "increases entity level by 1" do
-          expect { subject }.to change { entity.level }.by(1)
-        end
-      end
-
-      context "when level up is NOT allowed" do
-        context "when max level reached" do
-          let(:entity) { create(:entity, name: :garden, level: entity_schema.levels.size) }
-          let(:entity_schema) { described_class.schema_for(:garden) }
-
-          it "doesn't increase level" do
-            expect { subject }.not_to change { entity.level }
-          end
-        end
-
-        context "when entity is NOT upgradable" do
-          let(:entity) { create(:entity, name: :rock) }
-
-          it "doesn't increase level" do
-            expect { subject }.not_to change { entity.level }
-          end
         end
       end
     end
