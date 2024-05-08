@@ -4,18 +4,13 @@ module Api::V1::Entity
 
     before_action :set_entity
     before_action :set_receipt, only: %i[level_up]
-    before_action :set_receipt_schema, only: %i[level_up]
 
     PERMITTED_PARAMS = [
       :name
     ].freeze
 
     def create
-      Entity::CreateReceiptInteractor.call(
-        entity: @entity,
-        entity_schema: @entity.schema,
-        receipt_name: receipt_params.fetch(:name)
-      ).tap do |interactor|
+      Entity::CreateReceiptInteractor.call(entity: @entity, create_params: receipt_params).tap do |interactor|
         if interactor.success?
           render json: interactor.receipt, status: :created
         else
@@ -25,10 +20,7 @@ module Api::V1::Entity
     end
 
     def level_up
-      Entity::UpgradeReceiptInteractor.call(
-        receipt: @receipt,
-        receipt_schema: @receipt_schema
-      ).tap do |interactor|
+      Entity::UpgradeReceiptInteractor.call(receipt: @receipt, entity: @entity).tap do |interactor|
         if interactor.success?
           head :ok
         else
@@ -45,10 +37,6 @@ module Api::V1::Entity
 
     def set_receipt
       @receipt = @entity.receipts.find(params[:receipt_id])
-    end
-
-    def set_receipt_schema
-      @receipt_schema = @entity.schema.levels[@entity.level - 1].receipts[@receipt.name.to_sym]
     end
 
     def receipt_params

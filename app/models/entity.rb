@@ -2,13 +2,13 @@ class Entity < ApplicationRecord
   belongs_to :user
   belongs_to :farm
 
-  before_validation { self.user ||= farm&.user }
-
   has_many :entity_receipts, dependent: :destroy
 
-  validate :location_movability, if: :location_changed?, on: :update
-  validate :location_overlap, if: :location_changed?
-  validate :level_up, if: :level_changed?
+  before_validation { self.user ||= farm&.user }
+
+  validate :validate_location_movability, if: :location_changed?, on: :update
+  validate :validate_location_overlap, if: :location_changed?
+  validate :validate_level_up, if: :level_changed?
 
   scope :overlaps, ->(farm_id, self_id, location) do
     raw_box = "'#{location.values.join(",")}'::box"
@@ -35,22 +35,22 @@ class Entity < ApplicationRecord
 
   def schema = self.class.schema_for(name)
 
-  def level_up
-    return if level <= schema.levels.count
-
-    errors.add(:level, "max level reached")
-  end
-
-  def location_movability
+  def validate_location_movability
     return unless schema.garbage?
 
     errors.add(:location, "garbage entity can't be moved")
   end
 
-  def location_overlap
+  def validate_location_overlap
     return unless self.class.overlaps(farm_id, id, location).exists?
 
     errors.add(:location, "overlaps with another entity")
+  end
+
+  def validate_level_up
+    return if level <= schema.levels.count
+
+    errors.add(:level, "max level reached")
   end
 
   def location=(value)

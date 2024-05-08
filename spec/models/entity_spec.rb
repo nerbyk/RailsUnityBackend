@@ -42,7 +42,7 @@ RSpec.describe Entity, type: :model do
   end
 
   describe "validations" do
-    context "#location_overlap" do
+    context "#validate_location_overlap" do
       let!(:entity) { create(:entity) }
 
       context "when new entity does NOT overlap w/ existing" do
@@ -58,7 +58,7 @@ RSpec.describe Entity, type: :model do
       end
     end
 
-    context "#location_movability" do
+    context "#validate_location_movability" do
       subject do
         entity.location = {x: [0, 1], y: [1, 2]}
         entity
@@ -77,7 +77,7 @@ RSpec.describe Entity, type: :model do
       end
     end
 
-    context "#level_up" do
+    context "#validate_level_up" do
       subject do
         entity.level += 1
         entity

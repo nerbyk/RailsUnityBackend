@@ -119,7 +119,7 @@ RSpec.describe "EntityReceipts", type: :request do
 
       it "should return 422" do
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include("This receipt can't be upgraded yet")
+        expect(response.body).to include("receipt can't be upgraded")
       end
     end
   end
